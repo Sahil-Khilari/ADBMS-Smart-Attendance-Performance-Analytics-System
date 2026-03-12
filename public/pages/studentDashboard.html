@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard — Smart Attendance System</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Custom Dashboard Styles -->
+    <link href="../css/dashboard.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- NAVBAR                                                                 -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-navbar sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <i class="bi bi-mortarboard-fill me-2"></i>
+            Smart Attendance
+        </a>
+        <div class="d-flex align-items-center">
+            <span class="text-light me-3 d-none d-md-inline">
+                <i class="bi bi-person-circle me-1"></i>
+                <span id="navUserName">Student</span>
+            </span>
+            <button class="btn btn-outline-light btn-sm" id="logoutBtn">
+                <i class="bi bi-box-arrow-right me-1"></i> Logout
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- MAIN CONTENT                                                           -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="container-fluid px-4 py-4">
+
+    <!-- ── Row 1: Welcome + Quick Stats ── -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="fw-bold text-dark mb-1">
+                <i class="bi bi-speedometer2 me-2"></i>Student Dashboard
+            </h3>
+            <p class="text-muted mb-0">Your attendance, performance, and risk alerts at a glance.</p>
+        </div>
+    </div>
+
+    <!-- ── Row 2: Summary Stat Cards ── -->
+    <div class="row g-3 mb-4" id="statCards">
+        <div class="col-6 col-md-3">
+            <div class="stat-card stat-card-blue">
+                <div class="stat-icon"><i class="bi bi-journal-bookmark"></i></div>
+                <div class="stat-value" id="statSubjects">—</div>
+                <div class="stat-label">Subjects Enrolled</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card stat-card-green">
+                <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
+                <div class="stat-value" id="statAvgAttendance">—</div>
+                <div class="stat-label">Avg Attendance %</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card stat-card-purple">
+                <div class="stat-icon"><i class="bi bi-trophy"></i></div>
+                <div class="stat-value" id="statAvgMarks">—</div>
+                <div class="stat-label">Avg Performance %</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card stat-card-danger" id="riskStatCard">
+                <div class="stat-icon"><i class="bi bi-exclamation-triangle"></i></div>
+                <div class="stat-value" id="statRiskCount">0</div>
+                <div class="stat-label">Risk Alerts</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Row 3: Risk Alerts Banner ── -->
+    <div class="row mb-4" id="riskAlertSection" style="display: none;">
+        <div class="col-12">
+            <div class="risk-alert-banner">
+                <div class="d-flex align-items-center mb-2">
+                    <i class="bi bi-exclamation-triangle-fill text-danger me-2 fs-4"></i>
+                    <h5 class="mb-0 fw-bold text-danger">Attendance Risk Alerts</h5>
+                </div>
+                <p class="text-muted mb-3">The following subjects have attendance below <strong>50%</strong>. You must improve attendance to remain eligible.</p>
+                <div id="riskAlertCards" class="row g-2">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Row 4: Overview Charts (always visible) ── -->
+    <div class="row g-4 mb-4">
+        <!-- Attendance % per Subject (Horizontal Bar) -->
+        <div class="col-lg-6">
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <i class="bi bi-bar-chart-fill me-2"></i>
+                    Attendance % Per Subject
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="chartAttendanceBar"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subject Performance Comparison (Radar) -->
+        <div class="col-lg-6">
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <i class="bi bi-diagram-3-fill me-2"></i>
+                    Subject Performance Comparison
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="chartPerformanceRadar"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Row 5: Attendance Trend (Line Chart — full width) ── -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <i class="bi bi-graph-up me-2"></i>
+                    Attendance Trend Over Time
+                </div>
+                <div class="chart-card-body chart-card-body-wide">
+                    <canvas id="chartAttendanceTrend"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Row 6: Collapsible Subject Panels ── -->
+    <div class="row mb-3">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <h4 class="fw-bold mb-0">
+                <i class="bi bi-collection me-2"></i>Subject-Wise Details
+            </h4>
+            <div>
+                <button class="btn btn-sm btn-outline-primary me-1" id="expandAllBtn">
+                    <i class="bi bi-arrows-expand"></i> Expand All
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" id="collapseAllBtn">
+                    <i class="bi bi-arrows-collapse"></i> Collapse All
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion" id="subjectAccordion">
+        <!-- ── Subject panels are dynamically injected here by JS ── -->
+    </div>
+
+    <!-- ── Loading Spinner (shown while APIs load) ── -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-light mt-3 fw-semibold">Loading your dashboard...</p>
+    </div>
+
+</div><!-- /container -->
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SCRIPTS                                                                -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/studentDashboard.js"></script>
+
+</body>
+</html>

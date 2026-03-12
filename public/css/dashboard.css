@@ -1,0 +1,310 @@
+/* ============================================================================
+   dashboard.css — Student Dashboard Custom Styles
+   ============================================================================ */
+
+/* ── Global ── */
+body {
+    background: #f0f2f5;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+}
+
+/* ── Navbar ── */
+.bg-navbar {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364) !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.15rem;
+}
+
+/* ── Stat Cards ── */
+.stat-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 24px 20px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border-left: 5px solid transparent;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+.stat-card-blue  { border-left-color: #3b82f6; }
+.stat-card-green { border-left-color: #22c55e; }
+.stat-card-purple{ border-left-color: #8b5cf6; }
+.stat-card-danger{ border-left-color: #ef4444; }
+
+.stat-icon {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+    opacity: 0.7;
+}
+.stat-card-blue  .stat-icon { color: #3b82f6; }
+.stat-card-green .stat-icon { color: #22c55e; }
+.stat-card-purple .stat-icon{ color: #8b5cf6; }
+.stat-card-danger .stat-icon{ color: #ef4444; }
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1a1a2e;
+    line-height: 1.1;
+}
+.stat-label {
+    font-size: 0.8rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 6px;
+    font-weight: 600;
+}
+
+/* ── Risk Alert Banner ── */
+.risk-alert-banner {
+    background: #fff5f5;
+    border: 1px solid #fecaca;
+    border-left: 5px solid #ef4444;
+    border-radius: 12px;
+    padding: 20px 24px;
+}
+.risk-card {
+    background: #fff;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: transform 0.15s;
+}
+.risk-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.12);
+}
+.risk-card .risk-pct {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #ef4444;
+    min-width: 65px;
+    text-align: center;
+}
+.risk-card .risk-info h6 {
+    margin: 0;
+    font-weight: 700;
+    color: #1a1a2e;
+    font-size: 0.95rem;
+}
+.risk-card .risk-info p {
+    margin: 0;
+    font-size: 0.78rem;
+    color: #6b7280;
+}
+
+/* ── Chart Cards ── */
+.chart-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    height: 100%;
+}
+.chart-card-header {
+    background: linear-gradient(135deg, #1e3a5f, #2c5364);
+    color: #fff;
+    padding: 14px 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+.chart-card-body {
+    padding: 20px;
+    position: relative;
+    height: 300px;
+}
+.chart-card-body-wide {
+    height: 280px;
+}
+
+/* ── Accordion / Collapsible Panels ── */
+.accordion {
+    --bs-accordion-border-color: transparent;
+    --bs-accordion-border-radius: 14px;
+    --bs-accordion-inner-border-radius: 10px;
+}
+.accordion-item {
+    background: #fff;
+    border-radius: 14px !important;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: none !important;
+    overflow: hidden;
+}
+.accordion-button {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #1a1a2e;
+    background: #fff;
+    padding: 18px 24px;
+    border: none;
+    gap: 12px;
+}
+.accordion-button:not(.collapsed) {
+    background: linear-gradient(135deg, #eef2ff, #f0f9ff);
+    color: #1e3a5f;
+    box-shadow: none;
+}
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: transparent;
+}
+.accordion-button::after {
+    background-size: 1.1rem;
+}
+
+/* ── Subject Panel Header Badges ── */
+.subject-badge-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.att-badge {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+.att-badge-safe {
+    background: #dcfce7;
+    color: #166534;
+}
+.att-badge-warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+.att-badge-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* ── Subject Panel Body ── */
+.subject-panel-body {
+    padding: 24px;
+}
+.subject-charts-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+@media (max-width: 768px) {
+    .subject-charts-row {
+        grid-template-columns: 1fr;
+    }
+}
+.subject-chart-container {
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+}
+.subject-chart-container h6 {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+.subject-chart-canvas {
+    height: 220px !important;
+    width: 100% !important;
+}
+
+/* ── Attendance Detail Table inside panels ── */
+.att-detail-table {
+    font-size: 0.85rem;
+}
+.att-detail-table th {
+    background: #f1f5f9;
+    font-weight: 700;
+    color: #475569;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border: none;
+    padding: 10px 14px;
+}
+.att-detail-table td {
+    padding: 10px 14px;
+    vertical-align: middle;
+    border-color: #f1f5f9;
+}
+
+/* ── Attendance Required Indicator ── */
+.required-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+.required-indicator i {
+    color: #d97706;
+    font-size: 1.1rem;
+}
+.required-indicator span {
+    font-size: 0.85rem;
+    color: #92400e;
+    font-weight: 500;
+}
+.required-indicator strong {
+    color: #78350f;
+}
+
+/* ── Progress Bar Overrides ── */
+.progress {
+    height: 10px;
+    border-radius: 5px;
+    background: #e5e7eb;
+}
+.progress-bar-safe    { background: #22c55e; }
+.progress-bar-warning { background: #f59e0b; }
+.progress-bar-danger  { background: #ef4444; }
+
+/* ── Loading Overlay ── */
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 32, 39, 0.85);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.3s;
+}
+.loading-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ── Responsive tweaks ── */
+@media (max-width: 576px) {
+    .stat-value {
+        font-size: 1.5rem;
+    }
+    .stat-card {
+        padding: 16px 12px;
+    }
+    .chart-card-body {
+        height: 250px;
+        padding: 12px;
+    }
+}
