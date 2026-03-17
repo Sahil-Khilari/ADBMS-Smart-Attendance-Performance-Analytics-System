@@ -277,10 +277,12 @@ CREATE INDEX idx_perf_risk ON performance_records(is_at_risk);
 -- Password: 'admin123' → bcrypt hash (10 rounds)
 -- Change this immediately in production.
 
+-- INSERT INTO users (name, email, password, role) VALUES
+-- ('System Admin', 'admin@college.edu',
+--  '$2b$10$placeholder_hash_replace_in_app', 'admin');
 INSERT INTO users (name, email, password, role) VALUES
 ('System Admin', 'admin@college.edu',
- '$2b$10$placeholder_hash_replace_in_app', 'admin');
-
+ '$2b$10$NoGMczNbZq9s7W0obAaTBO.XO1PU35dOB36aPU6XKg1eqFI8LYiny', 'admin');
 -- ============================================================================
 -- ANALYTICS-READY VIEWS (Optional helpers for Chart.js dashboards)
 -- ============================================================================
