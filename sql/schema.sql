@@ -275,12 +275,14 @@ CREATE INDEX idx_perf_risk ON performance_records(is_at_risk);
 -- SEED: Default Admin Account
 -- ============================================================================
 -- Password: 'admin123' → bcrypt hash (10 rounds)
+-- Run seed-admin.js to regenerate the hash: node seed-admin.js
 -- Change this immediately in production.
-
 INSERT INTO users (name, email, password, role) VALUES
 ('System Admin', 'admin@college.edu',
- 'admin123', 'admin');
- #$2b$10$placeholder_hash_replace_in_app
+ '$2b$10$JD/XBTQLo0Bpg5Hv5uJgeuKCI4tiptjhob8GfuJnZIw83xIwvLRFe', 'admin')
+ON DUPLICATE KEY UPDATE
+    password = VALUES(password),
+    role     = VALUES(role);
 -- ============================================================================
 -- ANALYTICS-READY VIEWS (Optional helpers for Chart.js dashboards)
 -- ============================================================================

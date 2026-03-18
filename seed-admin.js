@@ -6,17 +6,20 @@ async function seedAdmin() {
     const hash = await bcrypt.hash(plainPassword, 10);
 
     await pool.query(
-        `UPDATE users SET password = ? WHERE email = ?`,
-        [hash, 'admin@college.edu']
+        `INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE password = VALUES(password), role = VALUES(role)`,
+        ['System Admin', 'admin@college.edu', hash, 'admin']
     );
 
-    console.log('✅ Admin password updated successfully!');
+    console.log('✅ Admin account seeded successfully!');
     console.log('📧 Email:   admin@college.edu');
     console.log('🔑 Password:', plainPassword);
+    await pool.end();
     process.exit(0);
 }
 
-seedAdmin().catch(err => {
+seedAdmin().catch(async err => {
     console.error('❌ Error:', err);
+    await pool.end();
     process.exit(1);
 });
