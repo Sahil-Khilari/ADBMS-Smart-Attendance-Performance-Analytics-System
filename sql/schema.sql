@@ -279,8 +279,8 @@ CREATE INDEX idx_perf_risk ON performance_records(is_at_risk);
 
 INSERT INTO users (name, email, password, role) VALUES
 ('System Admin', 'admin@college.edu',
- '$2b$10$placeholder_hash_replace_in_app', 'admin');
-
+ 'admin123', 'admin');
+ #$2b$10$placeholder_hash_replace_in_app
 -- ============================================================================
 -- ANALYTICS-READY VIEWS (Optional helpers for Chart.js dashboards)
 -- ============================================================================

@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Admin Dashboard — Smart Attendance</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet"/>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+    <style>
+        /* ── CSS Variables ── */
+        :root {
+            --bg:        #0d0f14;
+            --surface:   #13161e;
+            --surface2:  #1b1f2b;
+            --border:    #252938;
+            --accent:    #4f8ef7;
+            --accent2:   #e05c5c;
+            --accent3:   #4fca8e;
+            --text:      #e8eaf0;
+            --muted:     #6b7394;
+            --font-head: 'Syne', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-body);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 240px;
+            min-height: 100vh;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 28px 0;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            font-family: var(--font-head);
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--accent);
+            padding: 0 24px 28px;
+            border-bottom: 1px solid var(--border);
+            letter-spacing: -0.02em;
+        }
+
+        .sidebar-logo span { color: var(--text); }
+
+        .sidebar-section {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: 20px 24px 8px;
+        }
+
+        .nav-item { list-style: none; }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 24px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            transition: all 0.15s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--text);
+            background: var(--surface2);
+            border-left-color: var(--accent);
+        }
+
+        .nav-link i { font-size: 1rem; }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding: 20px 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .admin-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+        }
+
+        .avatar {
+            width: 34px; height: 34px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #fff;
+            font-family: var(--font-head);
+            flex-shrink: 0;
+        }
+
+        .admin-name { font-weight: 600; color: var(--text); }
+        .admin-role { color: var(--muted); font-size: 0.72rem; }
+
+        /* ── Main Content ── */
+        .main {
+            margin-left: 240px;
+            flex: 1;
+            padding: 32px 36px;
+            min-height: 100vh;
+        }
+
+        /* ── Top Bar ── */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-family: var(--font-head);
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .topbar-actions { display: flex; gap: 10px; align-items: center; }
+
+        .btn-primary-custom {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            transition: opacity 0.15s;
+        }
+
+        .btn-primary-custom:hover { opacity: 0.85; }
+
+        .btn-logout {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: all 0.15s;
+        }
+
+        .btn-logout:hover { border-color: var(--accent2); color: var(--accent2); }
+
+        /* ── Stat Cards ── */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.4s ease both;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+        }
+
+        .stat-card.blue::before  { background: var(--accent); }
+        .stat-card.red::before   { background: var(--accent2); }
+        .stat-card.green::before { background: var(--accent3); }
+        .stat-card.gold::before  { background: #f5a623; }
+
+        .stat-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-family: var(--font-head);
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+        }
+
+        .stat-sub {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* ── Section Headers ── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: var(--font-head);
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .section-action {
+            font-size: 0.78rem;
+            color: var(--accent);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* ── Tables ── */
+        .table-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .table-card table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .table-card thead th {
+            padding: 12px 18px;
+            background: var(--surface2);
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .table-card tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.12s;
+        }
+
+        .table-card tbody tr:last-child { border-bottom: none; }
+        .table-card tbody tr:hover { background: var(--surface2); }
+
+        .table-card tbody td {
+            padding: 12px 18px;
+            color: var(--text);
+            vertical-align: middle;
+        }
+
+        /* ── Badges ── */
+        .badge-role {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge-admin    { background: rgba(79,142,247,0.15); color: var(--accent); }
+        .badge-teacher  { background: rgba(245,166,35,0.15);  color: #f5a623; }
+        .badge-student  { background: rgba(79,202,142,0.15);  color: var(--accent3); }
+        .badge-risk     { background: rgba(224,92,92,0.15);   color: var(--accent2); }
+        .badge-safe     { background: rgba(79,202,142,0.15);  color: var(--accent3); }
+
+        /* ── Action Buttons in table ── */
+        .btn-tbl {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: all 0.12s;
+            margin-right: 4px;
+        }
+
+        .btn-tbl:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-tbl.danger:hover { border-color: var(--accent2); color: var(--accent2); }
+
+        /* ── Two column layout ── */
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        /* ── Loading skeleton ── */
+        .skeleton {
+            background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 6px;
+            height: 16px;
+        }
+
+        /* ── Empty state ── */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        .empty-state i { font-size: 2rem; display: block; margin-bottom: 8px; }
+
+        /* ── Alert / Toast area ── */
+        #toast-area {
+            position: fixed;
+            bottom: 24px; right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast-msg {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-size: 0.82rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.2s ease;
+        }
+
+        .toast-msg.success { border-left: 3px solid var(--accent3); }
+        .toast-msg.error   { border-left: 3px solid var(--accent2); }
+
+        /* ── Animations ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shimmer {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ── Modal ── */
+        .modal-backdrop-custom {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-backdrop-custom.open { display: flex; }
+
+        .modal-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            width: 440px;
+            max-width: 95vw;
+        }
+
+        .modal-title {
+            font-family: var(--font-head);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .form-group { margin-bottom: 14px; }
+
+        .form-label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 6px;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 0.85rem;
+            font-family: var(--font-body);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .form-input:focus { border-color: var(--accent); }
+
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            font-family: var(--font-body);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================================================================
+         SIDEBAR
+    ================================================================ -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">Smart<span>Attend</span></div>
+
+        <div class="sidebar-section">Overview</div>
+        <ul style="list-style:none; padding:0;">
+            <li class="nav-item">
+                <a href="#" class="nav-link active" data-section="overview">
+                    <i class="bi bi-grid-1x2"></i> Dashboard
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-section">Management</div>
+        <ul style="list-style:none; padding:0;">
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-section="teachers">
+                    <i class="bi bi-person-badge"></i> Teachers
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-section="students">
+                    <i class="bi bi-people"></i> Students
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-section="subjects">
+                    <i class="bi bi-book"></i> Subjects
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-section">Analytics</div>
+        <ul style="list-style:none; padding:0;">
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-section="attendance">
+                    <i class="bi bi-calendar-check"></i> Attendance
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-section="atrisk">
+                    <i class="bi bi-exclamation-triangle"></i> At-Risk Students
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-bottom">
+            <!-- ── HOW TO FILL THIS DYNAMICALLY ──
+                 After login, your api.js stores the user object in localStorage.
+                 On page load, read it like this:
+                 
+                 const user = JSON.parse(localStorage.getItem('user'));
+                 document.getElementById('admin-name').textContent = user.name;
+                 document.getElementById('admin-avatar').textContent = user.name[0].toUpperCase();
+            -->
+            <div class="admin-badge">
+                <div class="avatar" id="admin-avatar">A</div>
+                <div>
+                    <div class="admin-name" id="admin-name">Admin</div>
+                    <div class="admin-role">Administrator</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ================================================================
+         MAIN CONTENT
+    ================================================================ -->
+    <main class="main">
+
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="page-title" id="page-title">Overview</div>
+            <div class="topbar-actions">
+                <!-- Add Teacher button — triggers the Add Teacher modal -->
+                <button class="btn-primary-custom" id="btn-add-teacher" onclick="openModal('modal-add-teacher')">
+                    <i class="bi bi-plus"></i> Add Teacher
+                </button>
+                <!-- Logout button -->
+                <button class="btn-logout" onclick="logout()">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION: OVERVIEW (default visible)
+        ============================================================ -->
+        <section id="section-overview">
+
+            <!-- Stat Cards -->
+            <div class="stat-grid">
+                <!-- ── HOW TO POPULATE THESE ──
+                     Call GET /api/admin/stats (you'll need to build this endpoint).
+                     It should return: { teachers, students, subjects, atRiskCount }
+                     Then set the values like:
+                     document.getElementById('stat-teachers').textContent = data.teachers;
+                -->
+                <div class="stat-card blue" style="animation-delay:0s">
+                    <div class="stat-label">Total Teachers</div>
+                    <div class="stat-value" id="stat-teachers">—</div>
+                    <div class="stat-sub">Across all departments</div>
+                </div>
+                <div class="stat-card gold" style="animation-delay:0.08s">
+                    <div class="stat-label">Total Students</div>
+                    <div class="stat-value" id="stat-students">—</div>
+                    <div class="stat-sub">Currently enrolled</div>
+                </div>
+                <div class="stat-card green" style="animation-delay:0.16s">
+                    <div class="stat-label">Active Subjects</div>
+                    <div class="stat-value" id="stat-subjects">—</div>
+                    <div class="stat-sub">This academic year</div>
+                </div>
+                <div class="stat-card red" style="animation-delay:0.24s">
+                    <div class="stat-label">At-Risk Students</div>
+                    <div class="stat-value" id="stat-atrisk">—</div>
+                    <div class="stat-sub">Attendance &lt; 75%</div>
+                </div>
+            </div>
+
+            <!-- At-Risk Students Preview -->
+            <div class="section-header">
+                <div class="section-title"><i class="bi bi-exclamation-triangle" style="color:var(--accent2)"></i> At-Risk Students</div>
+                <a class="section-action" onclick="switchSection('atrisk')">View all →</a>
+            </div>
+
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Roll No.</th>
+                            <th>Subject</th>
+                            <th>Attendance %</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbl-atrisk-preview">
+                        <!-- ── HOW TO POPULATE ──
+                             Call GET /api/analytics/at-risk (or query vw_at_risk_students view).
+                             For each row in the response, create a <tr> and append it here.
+                             Example JS:
+                             
+                             const res = await apiFetch('/api/analytics/at-risk');
+                             res.data.slice(0, 5).forEach(s => {
+                                 document.getElementById('tbl-atrisk-preview').insertAdjacentHTML('beforeend', `
+                                     <tr>
+                                         <td>${s.student_name}</td>
+                                         <td>${s.roll_number}</td>
+                                         <td>${s.subject_name}</td>
+                                         <td>${s.attendance_pct}%</td>
+                                         <td><span class="badge-role badge-risk">${s.risk_reason}</span></td>
+                                     </tr>
+                                 `);
+                             });
+                        -->
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <i class="bi bi-hourglass-split"></i>
+                                Loading at-risk students...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+        <!-- ============================================================
+             SECTION: TEACHERS
+        ============================================================ -->
+        <section id="section-teachers" style="display:none">
+
+            <div class="section-header">
+                <div class="section-title">All Teachers</div>
+                <button class="btn-primary-custom" onclick="openModal('modal-add-teacher')">
+                    <i class="bi bi-plus"></i> Add Teacher
+                </button>
+            </div>
+
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th>Designation</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbl-teachers">
+                        <!-- ── HOW TO POPULATE ──
+                             Call GET /api/admin/teachers
+                             Expected response: { success: true, data: [ { id, name, email, department, designation, is_active } ] }
+                             
+                             const res = await apiFetch('/api/admin/teachers');
+                             res.data.forEach(t => {
+                                 document.getElementById('tbl-teachers').insertAdjacentHTML('beforeend', `
+                                     <tr>
+                                         <td>${t.name}</td>
+                                         <td>${t.email}</td>
+                                         <td>${t.department}</td>
+                                         <td>${t.designation}</td>
+                                         <td>
+                                             <span class="badge-role ${t.is_active ? 'badge-safe' : 'badge-risk'}">
+                                                 ${t.is_active ? 'Active' : 'Inactive'}
+                                             </span>
+                                         </td>
+                                         <td>
+                                             <button class="btn-tbl" onclick="editTeacher(${t.id})">Edit</button>
+                                             <button class="btn-tbl danger" onclick="deactivateUser(${t.user_id})">Deactivate</button>
+                                         </td>
+                                     </tr>
+                                 `);
+                             });
+                        -->
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <i class="bi bi-person-badge"></i>
+                                No teachers found. Add one above.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             SECTION: STUDENTS
+        ============================================================ -->
+        <section id="section-students" style="display:none">
+
+            <div class="section-header">
+                <div class="section-title">All Students</div>
+                <button class="btn-primary-custom" onclick="openModal('modal-add-student')">
+                    <i class="bi bi-plus"></i> Add Student
+                </button>
+            </div>
+
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Roll No.</th>
+                            <th>Department</th>
+                            <th>Semester</th>
+                            <th>Admission Year</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbl-students">
+                        <!-- ── HOW TO POPULATE ──
+                             Call GET /api/admin/students
+                             Same pattern as teachers table above.
+                             Fields: name, roll_number, department, semester, admission_year, is_active
+                        -->
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <i class="bi bi-people"></i>
+                                No students found. Add one above.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             SECTION: SUBJECTS
+        ============================================================ -->
+        <section id="section-subjects" style="display:none">
+
+            <div class="section-header">
+                <div class="section-title">All Subjects</div>
+            </div>
+
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Subject Name</th>
+                            <th>Department</th>
+                            <th>Semester</th>
+                            <th>Teacher</th>
+                            <th>Academic Year</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbl-subjects">
+                        <!-- ── HOW TO POPULATE ──
+                             Call GET /api/admin/subjects (build this endpoint in adminController.js)
+                             JOIN subjects with teachers and users to get teacher name.
+                        -->
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <i class="bi bi-book"></i>
+                                No subjects found.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             SECTION: AT-RISK STUDENTS (full list)
+        ============================================================ -->
+        <section id="section-atrisk" style="display:none">
+
+            <div class="section-header">
+                <div class="section-title"><i class="bi bi-exclamation-triangle" style="color:var(--accent2)"></i> All At-Risk Students</div>
+            </div>
+
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Roll No.</th>
+                            <th>Department</th>
+                            <th>Subject</th>
+                            <th>Attendance %</th>
+                            <th>Total Marks</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbl-atrisk-full">
+                        <!-- ── HOW TO POPULATE ──
+                             Call GET /api/analytics/at-risk
+                             This queries the vw_at_risk_students view in your schema.
+                             All fields are available from that view.
+                        -->
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <i class="bi bi-check-circle" style="color:var(--accent3)"></i>
+                                No at-risk students. All good!
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             SECTION: ATTENDANCE OVERVIEW
+        ============================================================ -->
+        <section id="section-attendance" style="display:none">
+            <div class="section-header">
+                <div class="section-title">Attendance Overview</div>
+            </div>
+            <div class="empty-state" style="padding:60px; background:var(--surface); border:1px solid var(--border); border-radius:12px;">
+                <i class="bi bi-calendar-check" style="font-size:2.5rem; color:var(--muted); display:block; margin-bottom:12px;"></i>
+                <!-- ── HOW TO IMPLEMENT ──
+                     Call GET /api/analytics/subject/:id for each subject.
+                     Use vw_subject_attendance view data.
+                     Render a Chart.js bar chart showing attendance % per subject.
+                     
+                     Example:
+                     new Chart(ctx, {
+                         type: 'bar',
+                         data: {
+                             labels: subjects.map(s => s.subject_code),
+                             datasets: [{ data: subjects.map(s => s.attendance_percentage) }]
+                         }
+                     });
+                -->
+                <span style="color:var(--muted); font-size:0.9rem;">
+                    Attendance chart goes here — connect to <code style="color:var(--accent)">/api/analytics/subject/:id</code>
+                </span>
+            </div>
+        </section>
+
+    </main><!-- end .main -->
+
+    <!-- ================================================================
+         MODAL: ADD TEACHER
+    ================================================================ -->
+    <div class="modal-backdrop-custom" id="modal-add-teacher">
+        <div class="modal-box">
+            <div class="modal-title">Add New Teacher</div>
+
+            <!-- ── HOW TO SUBMIT ──
+                 On form submit, call POST /api/admin/teachers with:
+                 { name, email, password, department, designation }
+                 
+                 Your adminController.js should:
+                 1. Hash the password with bcrypt
+                 2. INSERT into users (name, email, hash, 'teacher')
+                 3. INSERT into teachers (user_id, department, designation)
+                 
+                 On success, close modal, show toast, reload teachers table.
+            -->
+
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-input" id="teacher-name" placeholder="e.g. Dr. Sharma"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" id="teacher-email" placeholder="teacher@college.edu"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Temporary Password</label>
+                <input type="password" class="form-input" id="teacher-password" placeholder="They can change this later"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Department</label>
+                <input type="text" class="form-input" id="teacher-dept" placeholder="e.g. Computer Science"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Designation</label>
+                <input type="text" class="form-input" id="teacher-desig" placeholder="Assistant Professor"/>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('modal-add-teacher')">Cancel</button>
+                <button class="btn-primary-custom" onclick="submitAddTeacher()">
+                    <i class="bi bi-plus"></i> Add Teacher
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         MODAL: ADD STUDENT
+    ================================================================ -->
+    <div class="modal-backdrop-custom" id="modal-add-student">
+        <div class="modal-box">
+            <div class="modal-title">Add New Student</div>
+
+            <!-- ── HOW TO SUBMIT ──
+                 Call POST /api/admin/students with:
+                 { name, email, password, roll_number, department, semester, admission_year }
+                 
+                 adminController.js should:
+                 1. Hash password
+                 2. INSERT into users (name, email, hash, 'student')
+                 3. INSERT into students (user_id, roll_number, department, semester, admission_year)
+            -->
+
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-input" id="student-name" placeholder="e.g. Rahul Verma"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" id="student-email" placeholder="student@college.edu"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Temporary Password</label>
+                <input type="password" class="form-input" id="student-password"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Roll Number</label>
+                <input type="text" class="form-input" id="student-roll" placeholder="e.g. CS2024001"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Department</label>
+                <input type="text" class="form-input" id="student-dept"/>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div class="form-group">
+                    <label class="form-label">Semester</label>
+                    <input type="number" class="form-input" id="student-sem" min="1" max="8" placeholder="1"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Admission Year</label>
+                    <input type="number" class="form-input" id="student-year" placeholder="2024"/>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('modal-add-student')">Cancel</button>
+                <button class="btn-primary-custom" onclick="submitAddStudent()">
+                    <i class="bi bi-plus"></i> Add Student
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification area -->
+    <div id="toast-area"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    // ============================================================================
+    // ADMIN DASHBOARD — JavaScript
+    // ============================================================================
+
+    // ── HOW TO FIX THE LOGIN REDIRECT ──
+    // In your login.html, after a successful POST /api/auth/login,
+    // you get back: { success: true, token, user: { id, name, email, role } }
+    //
+    // Store both and redirect based on role:
+    //
+    //   localStorage.setItem('token', data.token);
+    //   localStorage.setItem('user', JSON.stringify(data.user));
+    //
+    //   if (data.user.role === 'admin')   window.location.href = '/pages/adminDashboard.html';
+    //   if (data.user.role === 'teacher') window.location.href = '/pages/teacherDashboard.html';
+    //   if (data.user.role === 'student') window.location.href = '/pages/studentDashboard.html';
+    //
+    // ── END OF LOGIN REDIRECT FIX ──
+
+
+    // ── GUARD: Redirect to login if not authenticated as admin ──
+    // ── HOW THIS WORKS ──
+    // On every page load, check if there's a valid token and the role is 'admin'.
+    // If not, redirect to login.html.
+    (function guard() {
+        const token = localStorage.getItem('token');
+        const user  = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!token || user.role !== 'admin') {
+            window.location.href = '/login.html';
+        }
+        // Populate sidebar name and avatar initial
+        if (user.name) {
+            document.getElementById('admin-name').textContent  = user.name;
+            document.getElementById('admin-avatar').textContent = user.name[0].toUpperCase();
+        }
+    })();
+
+
+    // ── apiFetch: Authenticated fetch wrapper ──
+    // ── HOW THIS WORKS ──
+    // Adds Authorization: Bearer <token> header to every request.
+    // If server returns 401, token is expired → redirect to login.
+    async function apiFetch(url, options = {}) {
+        const token = localStorage.getItem('token');
+        const res = await fetch(url, {
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                ...(options.headers || {})
+            }
+        });
+        if (res.status === 401) {
+            localStorage.clear();
+            window.location.href = '/login.html';
+        }
+        return res.json();
+    }
+
+
+    // ── Sidebar navigation ──
+    const sections = ['overview','teachers','students','subjects','attendance','atrisk'];
+    const titles   = {
+        overview:   'Overview',
+        teachers:   'Teachers',
+        students:   'Students',
+        subjects:   'Subjects',
+        attendance: 'Attendance Overview',
+        atrisk:     'At-Risk Students'
+    };
+
+    function switchSection(name) {
+        sections.forEach(s => {
+            const el = document.getElementById('section-' + s);
+            if (el) el.style.display = s === name ? '' : 'none';
+        });
+        document.querySelectorAll('.nav-link').forEach(l => {
+            l.classList.toggle('active', l.dataset.section === name);
+        });
+        document.getElementById('page-title').textContent = titles[name] || name;
+
+        // ── HOW TO LAZY-LOAD EACH SECTION ──
+        // When user clicks a nav link, load data for that section.
+        // Example: if (name === 'teachers') loadTeachers();
+        if (name === 'teachers')   loadTeachers();
+        if (name === 'students')   loadStudents();
+        if (name === 'atrisk')     loadAtRisk('tbl-atrisk-full');
+    }
+
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            const section = link.dataset.section;
+            if (section) switchSection(section);
+        });
+    });
+
+
+    // ── Load overview stats on page load ──
+    // ── HOW TO BUILD THE STATS ENDPOINT ──
+    // In adminController.js, create a getStats function:
+    //
+    //   exports.getStats = async (req, res) => {
+    //       const [[{ teachers }]] = await pool.query('SELECT COUNT(*) AS teachers FROM teachers');
+    //       const [[{ students }]] = await pool.query('SELECT COUNT(*) AS students FROM students');
+    //       const [[{ subjects }]] = await pool.query('SELECT COUNT(*) AS subjects FROM subjects');
+    //       const [[{ atRisk   }]] = await pool.query('SELECT COUNT(*) AS atRisk FROM performance_records WHERE is_at_risk = 1');
+    //       res.json({ success: true, data: { teachers, students, subjects, atRisk } });
+    //   };
+    //
+    // Then in adminRoutes.js: router.get('/stats', auth, roleGuard('admin'), getStats);
+    async function loadStats() {
+        try {
+            const res = await apiFetch('/api/admin/stats');
+            if (res.success) {
+                document.getElementById('stat-teachers').textContent = res.data.teachers ?? '—';
+                document.getElementById('stat-students').textContent = res.data.students ?? '—';
+                document.getElementById('stat-subjects').textContent = res.data.subjects ?? '—';
+                document.getElementById('stat-atrisk').textContent   = res.data.atRisk   ?? '—';
+            }
+        } catch (e) {
+            console.error('Stats load failed:', e);
+        }
+    }
+
+
+    // ── Load at-risk preview on overview ──
+    async function loadAtRisk(tbodyId) {
+        // ── HOW TO BUILD THIS ENDPOINT ──
+        // In analyticsController.js:
+        //
+        //   exports.getAtRisk = async (req, res) => {
+        //       const [rows] = await pool.query('SELECT * FROM vw_at_risk_students');
+        //       res.json({ success: true, data: rows });
+        //   };
+        //
+        // In analyticsRoutes.js: router.get('/at-risk', auth, roleGuard('admin'), getAtRisk);
+        try {
+            const res   = await apiFetch('/api/analytics/at-risk');
+            const tbody = document.getElementById(tbodyId);
+            if (!res.success || !res.data.length) {
+                tbody.innerHTML = `<tr><td colspan="7" class="empty-state"><i class="bi bi-check-circle"></i>No at-risk students.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = res.data.map(s => `
+                <tr>
+                    <td>${s.student_name}</td>
+                    <td>${s.roll_number}</td>
+                    <td>${s.subject_code}</td>
+                    <td>${s.attendance_pct}%</td>
+                    <td><span class="badge-role badge-risk">${s.risk_reason || 'At risk'}</span></td>
+                </tr>
+            `).join('');
+        } catch(e) { console.error(e); }
+    }
+
+
+    // ── Load teachers list ──
+    async function loadTeachers() {
+        // ── HOW TO BUILD THIS ENDPOINT ──
+        // GET /api/admin/teachers → adminController.js getTeachers
+        // SELECT u.id as user_id, u.name, u.email, u.is_active, t.id, t.department, t.designation
+        // FROM teachers t JOIN users u ON u.id = t.user_id
+        try {
+            const res = await apiFetch('/api/admin/teachers');
+            const tbody = document.getElementById('tbl-teachers');
+            if (!res.success || !res.data.length) {
+                tbody.innerHTML = `<tr><td colspan="6" class="empty-state"><i class="bi bi-person-badge"></i>No teachers yet.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = res.data.map(t => `
+                <tr>
+                    <td>${t.name}</td>
+                    <td>${t.email}</td>
+                    <td>${t.department}</td>
+                    <td>${t.designation}</td>
+                    <td><span class="badge-role ${t.is_active ? 'badge-safe' : 'badge-risk'}">${t.is_active ? 'Active' : 'Inactive'}</span></td>
+                    <td>
+                        <button class="btn-tbl danger" onclick="deactivateUser(${t.user_id})">Deactivate</button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch(e) { console.error(e); }
+    }
+
+
+    // ── Load students list ──
+    async function loadStudents() {
+        // ── HOW TO BUILD THIS ENDPOINT ──
+        // GET /api/admin/students → adminController.js getStudents
+        try {
+            const res = await apiFetch('/api/admin/students');
+            const tbody = document.getElementById('tbl-students');
+            if (!res.success || !res.data.length) {
+                tbody.innerHTML = `<tr><td colspan="7" class="empty-state"><i class="bi bi-people"></i>No students yet.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = res.data.map(s => `
+                <tr>
+                    <td>${s.name}</td>
+                    <td>${s.roll_number}</td>
+                    <td>${s.department}</td>
+                    <td>Sem ${s.semester}</td>
+                    <td>${s.admission_year}</td>
+                    <td><span class="badge-role ${s.is_active ? 'badge-safe' : 'badge-risk'}">${s.is_active ? 'Active' : 'Inactive'}</span></td>
+                    <td>
+                        <button class="btn-tbl danger" onclick="deactivateUser(${s.user_id})">Deactivate</button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch(e) { console.error(e); }
+    }
+
+
+    // ── Deactivate a user (teacher or student) ──
+    // ── HOW TO BUILD THIS ENDPOINT ──
+    // PATCH /api/admin/users/:id/deactivate → adminController.js
+    // UPDATE users SET is_active = FALSE WHERE id = ?
+    async function deactivateUser(userId) {
+        if (!confirm('Deactivate this user? They will no longer be able to login.')) return;
+        const res = await apiFetch(`/api/admin/users/${userId}/deactivate`, { method: 'PATCH' });
+        showToast(res.success ? 'User deactivated.' : res.message, res.success ? 'success' : 'error');
+        loadTeachers();
+        loadStudents();
+    }
+
+
+    // ── Submit Add Teacher form ──
+    async function submitAddTeacher() {
+        const payload = {
+            name:        document.getElementById('teacher-name').value.trim(),
+            email:       document.getElementById('teacher-email').value.trim(),
+            password:    document.getElementById('teacher-password').value,
+            department:  document.getElementById('teacher-dept').value.trim(),
+            designation: document.getElementById('teacher-desig').value.trim() || 'Assistant Professor'
+        };
+        if (!payload.name || !payload.email || !payload.password) {
+            showToast('Please fill all required fields.', 'error'); return;
+        }
+        // ── HOW TO BUILD THIS ENDPOINT ──
+        // POST /api/admin/teachers → adminController.js createTeacher
+        // 1. bcrypt.hash(password, 10)
+        // 2. INSERT into users
+        // 3. INSERT into teachers
+        const res = await apiFetch('/api/admin/teachers', {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+        showToast(res.message, res.success ? 'success' : 'error');
+        if (res.success) { closeModal('modal-add-teacher'); loadStats(); }
+    }
+
+
+    // ── Submit Add Student form ──
+    async function submitAddStudent() {
+        const payload = {
+            name:           document.getElementById('student-name').value.trim(),
+            email:          document.getElementById('student-email').value.trim(),
+            password:       document.getElementById('student-password').value,
+            roll_number:    document.getElementById('student-roll').value.trim(),
+            department:     document.getElementById('student-dept').value.trim(),
+            semester:       parseInt(document.getElementById('student-sem').value),
+            admission_year: parseInt(document.getElementById('student-year').value)
+        };
+        if (!payload.name || !payload.email || !payload.password || !payload.roll_number) {
+            showToast('Please fill all required fields.', 'error'); return;
+        }
+        // ── HOW TO BUILD THIS ENDPOINT ──
+        // POST /api/admin/students → adminController.js createStudent
+        const res = await apiFetch('/api/admin/students', {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+        showToast(res.message, res.success ? 'success' : 'error');
+        if (res.success) { closeModal('modal-add-student'); loadStats(); }
+    }
+
+
+    // ── Modal helpers ──
+    function openModal(id)  { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    // Close modal if clicking backdrop
+    document.querySelectorAll('.modal-backdrop-custom').forEach(m => {
+        m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+    });
+
+
+    // ── Toast notifications ──
+    function showToast(msg, type = 'success') {
+        const area  = document.getElementById('toast-area');
+        const toast = document.createElement('div');
+        toast.className = `toast-msg ${type}`;
+        toast.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle' : 'x-circle'}"></i> ${msg}`;
+        area.appendChild(toast);
+        setTimeout(() => toast.remove(), 3500);
+    }
+
+
+    // ── Logout ──
+    function logout() {
+        // ── HOW THIS WORKS ──
+        // Calls POST /api/auth/logout (optional, JWT is stateless).
+        // Clears localStorage and redirects to login.
+        localStorage.clear();
+        window.location.href = '/login.html';
+    }
+
+
+    // ── Init on page load ──
+    loadStats();
+    loadAtRisk('tbl-atrisk-preview');
+
+    </script>
+</body>
+</html>
